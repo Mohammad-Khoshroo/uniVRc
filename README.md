@@ -50,6 +50,12 @@
   - Standardizes spacing around operators (`:=`, `=`, `==`, `!=`, `<=`, `>=`).
   - Cleans up trailing whitespace and collapses redundant empty lines.
 
+### Go to Definition (F12)
+- Instantly jump to declarations of variables, ports, state registers, parameters, functions, structs, and enums using `F12` or `Ctrl + Click`.
+
+### Rename Symbol (F2)
+- Safely and atomically rename symbols across the entire document using `F2`, with full support for undo (`Ctrl + Z`).
+
 ### Code Snippets
 Complete catalog of production-ready boilerplate templates triggered by typing the prefix and hitting `Tab`:
 - **Architecture**: `mod` (Hardware Module), `mod_axis` (AXI-Stream Interface), `mod_axilite` (AXI-Lite Slave), `inst` (Submodule Instantiation), `param` (Generics/Parameters).
@@ -67,10 +73,10 @@ Complete catalog of production-ready boilerplate templates triggered by typing t
 ### Installing from VSIX Package
 Pre-packaged standalone release:
 ```text
-vscode-univrc/univrc-0.3.0.vsix
+vscode-univrc/univrc-0.3.1.vsix
 ```
 
 1. In VS Code, open the Extensions view (`Ctrl + Shift + X`).
 2. Click the `...` menu at the top right of the Extensions panel.
-3. Select **Install from VSIX...** and choose `univrc-0.3.0.vsix`.
-*(Alternatively run via command line: `code --install-extension univrc-0.3.0.vsix`)*
+3. Select **Install from VSIX...** and choose `univrc-0.3.1.vsix`.
+*(Alternatively run via command line: `code --install-extension univrc-0.3.1.vsix`)*

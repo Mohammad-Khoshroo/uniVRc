@@ -561,6 +561,133 @@ function activate(context) {
     });
     context.subscriptions.push(visualizerCmd);
 
+    // ------------------------------------------------------------------------
+    // 7. Go to Definition Provider (F12 / Ctrl+Click)
+    // ------------------------------------------------------------------------
+    const definitionProvider = vscode.languages.registerDefinitionProvider('univrc', {
+        provideDefinition(document, position) {
+            const range = document.getWordRangeAtPosition(position, /[a-zA-Z_]\w*/);
+            if (!range) {
+                return null;
+            }
+
+            const word = document.getText(range);
+            const reserved = new Set([
+                'if', 'elif', 'else', 'switch', 'case', 'default', 'for', 'while', 'do', 'repeat',
+                'break', 'continue', 'return', 'int', 'float', 'bool', 'wire', 'reg', 'void',
+                'unsigned', 'signed', 'fxp', 'stream', 'fifo', 'true', 'false', 'in', 'out', 'inout',
+                'posedge', 'negedge', 'struct', 'enum', 'typedef', 'var', 'const', 'import'
+            ]);
+            if (reserved.has(word) || word.startsWith('@')) {
+                return null;
+            }
+
+            const text = document.getText();
+            const lines = text.split('\n');
+
+            const declPatterns = [
+                // Port declaration: in unsigned<32> word, out bool word
+                new RegExp(`\\b(in|out|inout)\\s+(?:@\\w+(?:\\([^)]*\\))?\\s+)*(?:unsigned<\\d+>|signed<\\d+>|fxp<\\d+,\\s*\\d+>|wire(?:<\\d+>)?|stream<[^>]+>|fifo<[^>]+>|int|float|bool|reg|\\w+)\\s+(${word})\\b`),
+                // Variable declaration: unsigned<32> word, wire word, int word[8], @REG unsigned<32> word
+                new RegExp(`(?:@REG\\s+)?(?:var|const|wire(?:<\\d+>)?|unsigned<\\d+>|signed<\\d+>|fxp<\\d+,\\s*\\d+>|stream<[^>]+>|fifo<[^>]+>|int|float|bool|reg|[A-Z]\\w*)\\s+(${word})\\b`),
+                // Struct / Enum / Typedef definition: struct word {, enum word {, typedef ... word;
+                new RegExp(`(?:struct|enum|typedef)\\s+(${word})\\b`),
+                // Enum member or constant definition: word = 2'b00
+                new RegExp(`^\\s*(${word})\\s*=\\s*(?:\\d|'|true|false|[A-Z_])`),
+                // Parameter definition: @PARAM(..., word = 32, ...)
+                new RegExp(`@PARAM\\s*\\([^)]*?\\b(${word})\\s*=`),
+                // Function / Module / Thread definition: word(...) { or void word(...) { or @MODULE word(...) {
+                new RegExp(`(?:@MODULE|@FUNC|@THREAD|void)?\\s*\\b(${word})\\s*\\(`)
+            ];
+
+            const searchOrder = [];
+            for (let i = position.line; i >= 0; i--) searchOrder.push(i);
+            for (let i = position.line + 1; i < lines.length; i++) searchOrder.push(i);
+
+            for (const lineIdx of searchOrder) {
+                const line = lines[lineIdx];
+                if (line.trim().startsWith('//') || line.trim().startsWith('/*') || line.trim().startsWith('*')) {
+                    continue;
+                }
+
+                for (const pattern of declPatterns) {
+                    const match = line.match(pattern);
+                    if (match) {
+                        const col = line.indexOf(word);
+                        if (col !== -1) {
+                            const targetPos = new vscode.Position(lineIdx, col);
+                            return new vscode.Location(document.uri, targetPos);
+                        }
+                    }
+                }
+            }
+
+            return null;
+        }
+    });
+    context.subscriptions.push(definitionProvider);
+
+    // ------------------------------------------------------------------------
+    // 8. Rename Symbol Provider (F2)
+    // ------------------------------------------------------------------------
+    const renameProvider = vscode.languages.registerRenameProvider('univrc', {
+        provideRenameEdits(document, position, newName) {
+            if (!/^[a-zA-Z_]\w*$/.test(newName)) {
+                throw new Error(`'${newName}' is not a valid uniVRc identifier.`);
+            }
+
+            const range = document.getWordRangeAtPosition(position, /[a-zA-Z_]\w*/);
+            if (!range) {
+                return null;
+            }
+
+            const oldName = document.getText(range);
+            const reserved = new Set([
+                'if', 'elif', 'else', 'switch', 'case', 'default', 'for', 'while', 'do', 'repeat',
+                'break', 'continue', 'return', 'int', 'float', 'bool', 'wire', 'reg', 'void',
+                'unsigned', 'signed', 'fxp', 'stream', 'fifo', 'true', 'false', 'in', 'out', 'inout',
+                'posedge', 'negedge', 'struct', 'enum', 'typedef', 'var', 'const', 'import'
+            ]);
+            if (reserved.has(oldName) || oldName.startsWith('@')) {
+                throw new Error(`Cannot rename reserved keyword or pragma '${oldName}'.`);
+            }
+
+            const workspaceEdit = new vscode.WorkspaceEdit();
+            const text = document.getText();
+            const lines = text.split('\n');
+            const regex = new RegExp(`\\b${oldName}\\b`, 'g');
+
+            for (let i = 0; i < lines.length; i++) {
+                const line = lines[i];
+
+                const trimmed = line.trim();
+                if (trimmed.startsWith('//') || trimmed.startsWith('/*') || trimmed.startsWith('*')) {
+                    continue;
+                }
+
+                const commentIndex = line.indexOf('//');
+                const codePart = commentIndex !== -1 ? line.substring(0, commentIndex) : line;
+
+                let match;
+                while ((match = regex.exec(codePart)) !== null) {
+                    const matchIndex = match.index;
+                    const before = codePart.substring(0, matchIndex);
+                    const doubleQuotes = (before.match(/"/g) || []).length;
+                    const singleQuotes = (before.match(/'/g) || []).length;
+                    if (doubleQuotes % 2 !== 0 || singleQuotes % 2 !== 0) {
+                        continue;
+                    }
+
+                    const replaceRange = new vscode.Range(i, matchIndex, i, matchIndex + oldName.length);
+                    workspaceEdit.replace(document.uri, replaceRange, newName);
+                }
+            }
+
+            return workspaceEdit;
+        }
+    });
+    context.subscriptions.push(renameProvider);
+
     // Initial check for open file
     if (vscode.window.activeTextEditor && vscode.window.activeTextEditor.document.languageId === 'univrc') {
         statusBarItem.show();

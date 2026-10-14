@@ -2,7 +2,7 @@
   "name": "univrc",
   "displayName": "uniVRc IntelliSense",
   "description": "Official uniVRc IntelliSense: Real-time Lark syntax diagnostics, syntax highlighting, file icons, and snippets for uniVRc (.vr) HLS language.",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "publisher": "univrc",
   "engines": {
     "vscode": "^1.60.0"
