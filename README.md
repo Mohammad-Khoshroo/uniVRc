@@ -1,4 +1,4 @@
-# uniVRc IntelliSense for Visual Studio Code
+# uniVRc
 
 <p align="center">
   <img src="icon.png" width="128" height="128" alt="uniVRc Logo" />
@@ -15,42 +15,23 @@
 
 ---
 
-## 🌟 Major Features
+## Features
 
-### 1. 🔍 Real-Time Syntax Diagnostics & Linter
-- **Live Parser Integration**: Interfaces directly with the native `Lark` parser engine (`anti-HLS/frontend/parser.py`).
+### Real-Time Syntax Diagnostics & Linter
+- **Live Parser Integration**: Directly interfaces with the native `Lark` parser engine (`uniVRc-HLS/frontend/parser.py`).
 - **Inline Error Squiggles**: Instant red squiggly underlines on syntax errors (unexpected tokens, invalid characters, unclosed blocks, missing semicolons) with line and column precision.
-- **VS Code Problems Panel (`Ctrl + Shift + M`)**: Full diagnostic reporting with one-click navigation to error locations.
+- **VS Code Problems Panel (`Ctrl + Shift + M`)**: Full diagnostic reporting in the Problems view with one-click navigation to error locations.
 - **Status Bar Indicator**:
   - `$(check) uniVRc: Valid` when error-free.
   - `$(error) uniVRc: N error(s)` when errors are detected (click to open Problems panel).
 - **Manual Trigger**: Run `Ctrl + Shift + P` -> `uniVRc: Check Syntax of Active File`.
 
-### 2. 📊 Interactive CDFG & Schedule Visualizer Webview
-- **Interactive Multi-View Dashboard**: Inspect Control Data Flow Graphs (CDFG), Control Flow Graphs (CFG), AST trees, Scheduled DFGs (SDFG), Gantt charts, and Hardware datapaths right inside VS Code.
-- **How to open**:
-  - Click the **Graph Icon button** in the top-right editor title bar.
-  - Right-click anywhere in a `.vr` file -> **uniVRc: Show CDFG & Schedule Visualization**.
-  - Or press `Ctrl + Shift + P` -> **uniVRc: Show CDFG & Schedule Visualization**.
-
-### 3. 💡 Hover Tooltips & Documentation
-- Hover over any HLS pragma (`@PIPE`, `@PARTITION`, `@MODULE`, `@BIND_OP`, etc.), bit-exact type (`unsigned<W>`, `fxp<W,F>`, `wire`), or operator (`:=`, `+:`, `<&`) to view instant Markdown documentation, explanations, and usage examples.
-
-### 4. 📑 Document Symbols & Hierarchical Outline
-- Full integration with VS Code's **Outline** view and **Breadcrumbs**.
-- Instantly browse and jump to Modules, Threads, Functions, Structs, Enums, and Testbenches.
-
-### 5. 📐 Auto-Formatter (`Shift + Alt + F`)
-- Automatically formats and cleans up your `.vr` code:
-  - Smart indentation for `{}` blocks and `switch/case` statements.
-  - Standardizes spacing around operators (`:=`, `=`, `==`, `!=`, `<=`, `>=`).
-  - Cleans up trailing whitespace and collapses redundant empty lines.
-
-### 6. 🎨 Dedicated "VR" File Icon Theme
+### Dedicated "VR" File Icon Theme
 - Authentic geometric orange **VR** logo for all `*.vr` and `*.VR` files.
 - **How to enable**: Press `Ctrl + Shift + P` -> type `Preferences: File Icon Theme` -> select **`uniVRc File Icons`**.
 
-### 7. ⚡ 48 Hardware & DSP Code Snippets
+
+### Code Snippets
 Complete catalog of production-ready boilerplate templates triggered by typing the prefix and hitting `Tab`:
 - **Architecture**: `mod` (Hardware Module), `mod_axis` (AXI-Stream Interface), `mod_axilite` (AXI-Lite Slave), `inst` (Submodule Instantiation), `param` (Generics/Parameters).
 - **Sequential Logic & FSM**: `thread_sync` (Clocked Process with Reset), `thread_comb` (Combinational Process), `fsm_3state` (3-State Moore/Mealy FSM), `shift_reg` (Pipelined Shift Register), `counter` (Hardware Up-Counter).
@@ -62,46 +43,15 @@ Complete catalog of production-ready boilerplate templates triggered by typing t
 
 ---
 
-## 🚀 Installation
+## Installation
 
 ### Installing from VSIX Package
 Pre-packaged standalone release:
 ```text
-vscode-univrc/univrc-syntax-0.3.0.vsix
+vscode-univrc/univrc-0.2.1.vsix
 ```
 
 1. In VS Code, open the Extensions view (`Ctrl + Shift + X`).
 2. Click the `...` menu at the top right of the Extensions panel.
-3. Select **Install from VSIX...** and choose `univrc-syntax-0.3.0.vsix`.
-*(Alternatively run via command line: `code --install-extension univrc-syntax-0.3.0.vsix`)*
-
----
-
-## 🔄 Automated Grammar Synchronization & Release CLI
-
-When your Lark grammar (`pseudo_univrc.lark`) changes, synchronize the extension and package a new `.vsix` with a single command:
-
-```bash
-# Sync grammar and rebuild VSIX
-python sync_from_lark.py
-
-# Sync and bump patch version (e.g. 0.3.0 -> 0.3.1)
-python sync_from_lark.py --bump patch
-
-# Sync and bump minor version (e.g. 0.3.0 -> 0.4.0)
-python sync_from_lark.py --bump minor
-```
-
----
-
-## 🤖 Continuous Integration & Automated Releases (GitHub Actions)
-
-A pre-configured workflow is included at [`.github/workflows/release.yml`](.github/workflows/release.yml).
-
-To release a new version automatically on GitHub:
-```bash
-git tag v0.3.0
-git push origin v0.3.0
-```
-
-The GitHub Actions workflow will automatically compile the extension, package the VSIX, and create a GitHub Release titled `uniVRc-v0.3.0` with the download asset attached.
+3. Select **Install from VSIX...** and choose `univrc-0.2.1.vsix`.
+*(Alternatively run via command line: `code --install-extension univrc-0.2.1.vsix`)*
