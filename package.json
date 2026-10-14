@@ -1,7 +1,7 @@
 {
   "name": "univrc-syntax",
-  "displayName": "uniVRc Language Support",
-  "description": "Syntax highlighting, real-time syntax analyzer (Lark diagnostics), file icons, and snippets for uniVRc (.vr) HLS language.",
+  "displayName": "uniVRc IntelliSense",
+  "description": "Official uniVRc IntelliSense: Real-time Lark syntax diagnostics, syntax highlighting, file icons, and snippets for uniVRc (.vr) HLS language.",
   "version": "0.2.1",
   "publisher": "univrc",
   "engines": {

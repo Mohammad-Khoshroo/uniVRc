@@ -31,8 +31,8 @@ def generate_vsix_manifest(name, version, publisher):
 <PackageManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011" xmlns:d="http://schemas.microsoft.com/developer/vsx-schema-design/2011">
   <Metadata>
     <Identity Id="{name}" Version="{version}" Language="en-US" Publisher="{publisher}" />
-    <DisplayName>uniVRc Language Support</DisplayName>
-    <Description>Syntax highlighting, real-time Lark syntax diagnostics, file icons, and snippets for uniVRc (.vr) HLS language.</Description>
+    <DisplayName>uniVRc IntelliSense</DisplayName>
+    <Description>Official uniVRc IntelliSense: Real-time Lark syntax diagnostics, syntax highlighting, file icons, and snippets for uniVRc (.vr) HLS language.</Description>
     <Categories>Programming Languages,Linters,Snippets</Categories>
     <Icon>extension/icon.png</Icon>
   </Metadata>

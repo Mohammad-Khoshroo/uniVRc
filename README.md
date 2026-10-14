@@ -1,4 +1,4 @@
-# uniVRc Language Support for Visual Studio Code
+# uniVRc IntelliSense
 
 <p align="center">
   <img src="icon.png" width="128" height="128" alt="uniVRc Logo" />
