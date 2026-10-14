@@ -15,9 +15,9 @@
 
 ---
 
-## 🌟 Key Features
+## Features
 
-### 1. 🔍 Real-Time Syntax Diagnostics & Linter
+### Real-Time Syntax Diagnostics & Linter
 - **Live Parser Integration**: Directly interfaces with the native `Lark` parser engine (`anti-HLS/frontend/parser.py`).
 - **Inline Error Squiggles**: Instant red squiggly underlines on syntax errors (unexpected tokens, invalid characters, unclosed blocks, missing semicolons) with line and column precision.
 - **VS Code Problems Panel (`Ctrl + Shift + M`)**: Full diagnostic reporting in the Problems view with one-click navigation to error locations.
@@ -26,20 +26,12 @@
   - `$(error) uniVRc: N error(s)` when errors are detected (click to open Problems panel).
 - **Manual Trigger**: Run `Ctrl + Shift + P` -> `uniVRc: Check Syntax of Active File`.
 
-### 2. 🎨 Dedicated "VR" File Icon Theme
+### Dedicated "VR" File Icon Theme
 - Authentic geometric orange **VR** logo for all `*.vr` and `*.VR` files.
 - **How to enable**: Press `Ctrl + Shift + P` -> type `Preferences: File Icon Theme` -> select **`uniVRc File Icons`**.
 
-### 3. 🌈 Comprehensive Syntax Highlighting
-- **HLS Directives & Pragmas**: `@MODULE`, `@PARAM`, `@FUNC`, `@THREAD`, `@PIPE`, `@UNROLL`, `@TRIPCOUNT`, `@PARTITION`, `@INTERFACE`, `@BIND_OP`, `@MEM`, `@REG`, `@WHEN`, `@RESET`, `@DEPENDENCE`, `@LOOP_FLATTEN`, and more.
-- **Hardware Sized Literals**: Sized binary, hex, and decimal constants (`32'hFFFF`, `8'd10`, `2'b01`).
-- **Dual Assignment Semantics**: Visual distinction between combinational blocking (`=`) and sequential non-blocking state assignments (`:=` and `:+ =`).
-- **Bit-Exact Hardware Types**: `unsigned<W>`, `signed<W>`, `fxp<W, F>`, `wire<W>`, `reg`, `stream<T>`, `fifo<T>`, `int`, `float`, `bool`, `void`.
-- **Control Flow & Loops**: `if`, `elif`, `else`, `switch`, `case`, `default`, `for`, `while`, `do`, `repeat`, `from`, `to`, `step`, `index`, `range`, `set`.
-- **Hardware Operators**: `+:`, `-:`, `<&`, `<|`, `<^`, `<<<`, `>>>`, `<<o`, `>>o`, `${...}`.
-- **Comments**: Single-line (`//` and `#`) and multi-line (`/* ... */`).
 
-### 4. ⚡ 48 Hardware & DSP Code Snippets
+### Code Snippets
 Complete catalog of production-ready boilerplate templates triggered by typing the prefix and hitting `Tab`:
 - **Architecture**: `mod` (Hardware Module), `mod_axis` (AXI-Stream Interface), `mod_axilite` (AXI-Lite Slave), `inst` (Submodule Instantiation), `param` (Generics/Parameters).
 - **Sequential Logic & FSM**: `thread_sync` (Clocked Process with Reset), `thread_comb` (Combinational Process), `fsm_3state` (3-State Moore/Mealy FSM), `shift_reg` (Pipelined Shift Register), `counter` (Hardware Up-Counter).
@@ -51,7 +43,7 @@ Complete catalog of production-ready boilerplate templates triggered by typing t
 
 ---
 
-## 🚀 Installation
+## Installation
 
 ### Installing from VSIX Package
 Pre-packaged standalone release:
@@ -63,46 +55,3 @@ vscode-univrc/univrc-syntax-0.2.1.vsix
 2. Click the `...` menu at the top right of the Extensions panel.
 3. Select **Install from VSIX...** and choose `univrc-syntax-0.2.1.vsix`.
 *(Alternatively run via command line: `code --install-extension univrc-syntax-0.2.1.vsix`)*
-
----
-
-## 🔄 Automated Grammar Synchronization & Release CLI
-
-When your Lark grammar (`pseudo_univrc.lark`) changes, synchronize the extension and package a new `.vsix` with a single command:
-
-```bash
-# Sync grammar and rebuild VSIX
-python sync_from_lark.py
-
-# Sync and bump patch version (e.g. 0.2.1 -> 0.2.2)
-python sync_from_lark.py --bump patch
-
-# Sync and bump minor version (e.g. 0.2.1 -> 0.3.0)
-python sync_from_lark.py --bump minor
-```
-
-### What `sync_from_lark.py` does:
-1. Dynamically extracts new keywords, `@...` attributes, and types from the Lark grammar.
-2. Updates `package.json` version.
-3. Regenerates the TextMate syntax definition (`syntaxes/univrc.tmLanguage.json`).
-4. Updates the server-side fallback grammar for the diagnostics engine.
-5. Updates your local VS Code installation immediately.
-6. Packages a new `.vsix` release ready for distribution.
-
----
-
-## 🤖 Continuous Integration & Automated Releases (GitHub Actions)
-
-A pre-configured workflow is included at [`.github/workflows/release.yml`](.github/workflows/release.yml).
-
-To release a new version automatically on GitHub:
-```bash
-git tag v0.2.1
-git push origin v0.2.1
-```
-
-The GitHub Actions workflow will:
-1. Set up the Python environment and dependencies (`lark`, `pillow`).
-2. Run `sync_from_lark.py` to compile the grammar and generate the `.vsix`.
-3. Create a GitHub Release and attach the `.vsix` binary for one-click user downloads.
-# vscode-uniVRc
