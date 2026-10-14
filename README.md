@@ -48,10 +48,10 @@ Complete catalog of production-ready boilerplate templates triggered by typing t
 ### Installing from VSIX Package
 Pre-packaged standalone release:
 ```text
-vscode-univrc/univrc-syntax-0.2.1.vsix
+vscode-univrc/univrc-0.2.1.vsix
 ```
 
 1. In VS Code, open the Extensions view (`Ctrl + Shift + X`).
 2. Click the `...` menu at the top right of the Extensions panel.
-3. Select **Install from VSIX...** and choose `univrc-syntax-0.2.1.vsix`.
-*(Alternatively run via command line: `code --install-extension univrc-syntax-0.2.1.vsix`)*
+3. Select **Install from VSIX...** and choose `univrc-0.2.1.vsix`.
+*(Alternatively run via command line: `code --install-extension univrc-0.2.1.vsix`)*
