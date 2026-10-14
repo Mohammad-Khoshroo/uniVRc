@@ -11,7 +11,7 @@ def get_package_info():
         pkg = json.load(f)
     version = pkg.get("version", "0.2.0")
     publisher = pkg.get("publisher", "univrc")
-    name = pkg.get("name", "univrc-syntax")
+    name = pkg.get("name", "univrc")
     return name, version, publisher
 
 CONTENT_TYPES_XML = """<?xml version="1.0" encoding="utf-8"?>
