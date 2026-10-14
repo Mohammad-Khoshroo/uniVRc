@@ -21,6 +21,14 @@
     "synthesis",
     "linter"
   ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Mohammad-Khoshroo/uniVRc"
+  },
+  "bugs": {
+    "url": "https://github.com/Mohammad-Khoshroo/uniVRc/issues"
+  },
+  "homepage": "https://github.com/Mohammad-Khoshroo/uniVRc#readme",
   "main": "./extension.js",
   "activationEvents": [
     "onLanguage:univrc"
