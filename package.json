@@ -1,0 +1,92 @@
+{
+  "name": "univrc-syntax",
+  "displayName": "uniVRc Language Support",
+  "description": "Syntax highlighting, real-time syntax analyzer (Lark diagnostics), file icons, and snippets for uniVRc (.vr) HLS language.",
+  "version": "0.2.1",
+  "publisher": "univrc",
+  "engines": {
+    "vscode": "^1.60.0"
+  },
+  "categories": [
+    "Programming Languages",
+    "Linters",
+    "Snippets"
+  ],
+  "keywords": [
+    "univrc",
+    "vr",
+    "hls",
+    "verilog",
+    "hardware",
+    "synthesis",
+    "linter"
+  ],
+  "main": "./extension.js",
+  "activationEvents": [
+    "onLanguage:univrc"
+  ],
+  "icon": "icon.png",
+  "contributes": {
+    "languages": [
+      {
+        "id": "univrc",
+        "aliases": [
+          "uniVRc",
+          "univrc",
+          "pseudo-uniVRc"
+        ],
+        "extensions": [
+          ".vr",
+          ".VR"
+        ],
+        "configuration": "./language-configuration.json",
+        "icon": {
+          "light": "./icons/vr_icon_32.png",
+          "dark": "./icons/vr_icon_32.png"
+        }
+      }
+    ],
+    "grammars": [
+      {
+        "language": "univrc",
+        "scopeName": "source.univrc",
+        "path": "./syntaxes/univrc.tmLanguage.json"
+      }
+    ],
+    "snippets": [
+      {
+        "language": "univrc",
+        "path": "./snippets/univrc.json"
+      }
+    ],
+    "iconThemes": [
+      {
+        "id": "univrc-icons",
+        "label": "uniVRc File Icons",
+        "path": "./icons/icon-theme.json"
+      }
+    ],
+    "commands": [
+      {
+        "command": "univrc.checkSyntax",
+        "title": "uniVRc: Check Syntax of Active File",
+        "category": "uniVRc"
+      }
+    ],
+    "configuration": {
+      "title": "uniVRc Language Configuration",
+      "properties": {
+        "univrc.enableSyntaxAnalysis": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable real-time Lark syntax analysis and error squiggles for .vr files."
+        },
+        "univrc.pythonPath": {
+          "type": "string",
+          "default": "python",
+          "description": "Path to the Python interpreter with Lark installed."
+        }
+      }
+    }
+  }
+}

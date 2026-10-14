@@ -1,0 +1,412 @@
+{
+  "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+  "name": "uniVRc",
+  "scopeName": "source.univrc",
+  "patterns": [
+    {
+      "include": "#comments"
+    },
+    {
+      "include": "#strings"
+    },
+    {
+      "include": "#directives"
+    },
+    {
+      "include": "#sized_numbers"
+    },
+    {
+      "include": "#numbers"
+    },
+    {
+      "include": "#booleans"
+    },
+    {
+      "include": "#keywords"
+    },
+    {
+      "include": "#port_directions"
+    },
+    {
+      "include": "#edge_triggers"
+    },
+    {
+      "include": "#types"
+    },
+    {
+      "include": "#builtins"
+    },
+    {
+      "include": "#named_ports"
+    },
+    {
+      "include": "#function_calls"
+    },
+    {
+      "include": "#operators"
+    },
+    {
+      "include": "#member_access"
+    },
+    {
+      "include": "#type_identifiers"
+    },
+    {
+      "include": "#identifiers"
+    }
+  ],
+  "repository": {
+    "comments": {
+      "patterns": [
+        {
+          "name": "comment.line.double-slash.univrc",
+          "begin": "//",
+          "end": "$"
+        },
+        {
+          "name": "comment.line.number-sign.univrc",
+          "begin": "#",
+          "end": "$"
+        },
+        {
+          "name": "comment.block.univrc",
+          "begin": "/\\*",
+          "end": "\\*/"
+        }
+      ]
+    },
+    "strings": {
+      "patterns": [
+        {
+          "name": "string.quoted.double.univrc",
+          "begin": "\"",
+          "end": "\"",
+          "patterns": [
+            {
+              "name": "constant.character.escape.univrc",
+              "match": "\\\\(?:[abfnrtv\\\\\"']|x[0-9a-fA-F]{2}|u[0-9a-fA-F]{4})"
+            }
+          ]
+        },
+        {
+          "name": "string.quoted.single.univrc",
+          "begin": "'",
+          "end": "'",
+          "patterns": [
+            {
+              "name": "constant.character.escape.univrc",
+              "match": "\\\\(?:[abfnrtv\\\\\"']|x[0-9a-fA-F]{2}|u[0-9a-fA-F]{4})"
+            }
+          ]
+        }
+      ]
+    },
+    "directives": {
+      "patterns": [
+        {
+          "name": "meta.directive.univrc",
+          "match": "(@)(?i:BIND_STORAGE|LOOP_FLATTEN|ALLOCATION|DEPENDENCE|LOOP_MERGE|OCCURRENCE|TRIPCOUNT|INTERFACE|TESTBENCH|PARTITION|DATAFLOW|RESOURCE|BIND_OP|RESHAPE|INLINE|THREAD|UNROLL|MODULE|IMPORT|RESET|WHILE|UNTIL|PARAM|WHEN|PIPE|FUNC|TRIG|REG|SIM|MEM)\\b",
+          "captures": {
+            "1": {
+              "name": "punctuation.definition.directive.univrc"
+            },
+            "0": {
+              "name": "keyword.control.directive.univrc"
+            }
+          }
+        },
+        {
+          "name": "keyword.control.directive.generic.univrc",
+          "match": "(@)([a-zA-Z_]\\w*)\\b",
+          "captures": {
+            "1": {
+              "name": "punctuation.definition.directive.univrc"
+            },
+            "2": {
+              "name": "keyword.control.directive.univrc"
+            }
+          }
+        }
+      ]
+    },
+    "sized_numbers": {
+      "patterns": [
+        {
+          "name": "constant.numeric.sized.binary.univrc",
+          "match": "\\b([0-9_]+)'([bB])([01_]+)\\b",
+          "captures": {
+            "1": {
+              "name": "constant.numeric.size.univrc"
+            },
+            "2": {
+              "name": "keyword.other.radix.univrc"
+            },
+            "3": {
+              "name": "constant.numeric.binary.univrc"
+            }
+          }
+        },
+        {
+          "name": "constant.numeric.sized.hex.univrc",
+          "match": "\\b([0-9_]+)'([hH])([0-9a-fA-F_]+)\\b",
+          "captures": {
+            "1": {
+              "name": "constant.numeric.size.univrc"
+            },
+            "2": {
+              "name": "keyword.other.radix.univrc"
+            },
+            "3": {
+              "name": "constant.numeric.hex.univrc"
+            }
+          }
+        },
+        {
+          "name": "constant.numeric.sized.decimal.univrc",
+          "match": "\\b([0-9_]+)'([dD])([0-9_]+)\\b",
+          "captures": {
+            "1": {
+              "name": "constant.numeric.size.univrc"
+            },
+            "2": {
+              "name": "keyword.other.radix.univrc"
+            },
+            "3": {
+              "name": "constant.numeric.decimal.univrc"
+            }
+          }
+        }
+      ]
+    },
+    "numbers": {
+      "patterns": [
+        {
+          "name": "constant.numeric.hex.univrc",
+          "match": "\\b0[xX][0-9a-fA-F_]+\\b"
+        },
+        {
+          "name": "constant.numeric.binary.univrc",
+          "match": "\\b0[bB][01_]+\\b"
+        },
+        {
+          "name": "constant.numeric.float.univrc",
+          "match": "\\b[0-9][0-9_]*\\.[0-9_]+(?:[eE][+-]?[0-9_]+)?\\b"
+        },
+        {
+          "name": "constant.numeric.integer.univrc",
+          "match": "\\b[0-9][0-9_]*\\b"
+        }
+      ]
+    },
+    "booleans": {
+      "patterns": [
+        {
+          "name": "constant.language.boolean.univrc",
+          "match": "\\b(true|false)\\b"
+        }
+      ]
+    },
+    "keywords": {
+      "patterns": [
+        {
+          "name": "keyword.control.conditional.univrc",
+          "match": "\\b(if|elif|else|switch|case|default)\\b"
+        },
+        {
+          "name": "keyword.control.loop.univrc",
+          "match": "\\b(repeat|while|for|do)\\b"
+        },
+        {
+          "name": "keyword.control.iteration.univrc",
+          "match": "\\b(index|range|step|from|set|to)\\b"
+        },
+        {
+          "name": "keyword.control.flow.univrc",
+          "match": "\\b(continue|return|break)\\b"
+        },
+        {
+          "name": "keyword.other.declaration.univrc",
+          "match": "\\b(typedef|import|struct|enum)\\b"
+        },
+        {
+          "name": "storage.modifier.variable.univrc",
+          "match": "\\b(const|var)\\b"
+        }
+      ]
+    },
+    "port_directions": {
+      "patterns": [
+        {
+          "name": "storage.modifier.port.univrc",
+          "match": "\\b(in|out|inout)\\b"
+        }
+      ]
+    },
+    "edge_triggers": {
+      "patterns": [
+        {
+          "name": "keyword.other.edge.univrc",
+          "match": "(?i:\\b(posedge|negedge)\\b)"
+        }
+      ]
+    },
+    "types": {
+      "patterns": [
+        {
+          "name": "storage.type.primitive.univrc",
+          "match": "\\b(float|wire|bool|reg|int)\\b"
+        },
+        {
+          "name": "storage.type.hardware.univrc",
+          "match": "\\b(unsigned|stream|signed|struct|fifo|fxp)\\b"
+        }
+      ]
+    },
+    "builtins": {
+      "patterns": [
+        {
+          "name": "support.function.builtin.math.univrc",
+          "match": "\\b(min|max|abs)\\b"
+        },
+        {
+          "name": "support.function.builtin.io.univrc",
+          "match": "\\b(print|println|\\$display|\\$write)\\b"
+        },
+        {
+          "name": "support.function.builtin.verification.univrc",
+          "match": "\\b(assert|delay|wait_cycles|cast)\\b"
+        }
+      ]
+    },
+    "named_ports": {
+      "patterns": [
+        {
+          "match": "(\\.)([a-zA-Z_]\\w*)\\s*(?=\\()",
+          "captures": {
+            "1": {
+              "name": "punctuation.accessor.univrc"
+            },
+            "2": {
+              "name": "variable.parameter.port.univrc"
+            }
+          }
+        }
+      ]
+    },
+    "function_calls": {
+      "patterns": [
+        {
+          "match": "\\b([a-zA-Z_]\\w*)\\s*(?=\\()",
+          "captures": {
+            "1": {
+              "name": "entity.name.function.univrc"
+            }
+          }
+        }
+      ]
+    },
+    "operators": {
+      "patterns": [
+        {
+          "name": "keyword.operator.assignment.sequential.univrc",
+          "match": ":="
+        },
+        {
+          "name": "keyword.operator.assignment.sequential.augmented.univrc",
+          "match": ":(?=\\+=|-=|\\*=|/=|%=|&=|\\|=|\\^=|<<=|>>=)[\\+\\-\\*/%&|\\^<>=]+"
+        },
+        {
+          "name": "keyword.operator.slice.univrc",
+          "match": "(\\+:|-:)"
+        },
+        {
+          "name": "keyword.operator.assignment.augmented.univrc",
+          "match": "(\\+=|-=|\\*=|/=|%=|&=|\\|=|\\^=|<<=|>>=)"
+        },
+        {
+          "name": "keyword.operator.increment-decrement.univrc",
+          "match": "(\\+\\+|--)"
+        },
+        {
+          "name": "keyword.operator.reduction.univrc",
+          "match": "(<&|<\\||<\\^|<!|<~\\||<~\\^)"
+        },
+        {
+          "name": "keyword.operator.bitwise.shift.univrc",
+          "match": "(<<<|>>>|<<o|>>o|<<|>>)"
+        },
+        {
+          "name": "keyword.operator.comparison.univrc",
+          "match": "(==|!=|<=|>=)"
+        },
+        {
+          "name": "keyword.operator.logical.word.univrc",
+          "match": "\\b(and|or|xor|not)\\b"
+        },
+        {
+          "name": "keyword.operator.logical.univrc",
+          "match": "(&&|\\|\\||!|\\^\\^)"
+        },
+        {
+          "name": "keyword.operator.bitwise.univrc",
+          "match": "(~\\^|\\^~|&|\\||\\^|~)"
+        },
+        {
+          "name": "keyword.operator.arithmetic.power.univrc",
+          "match": "\\*\\*"
+        },
+        {
+          "name": "keyword.operator.arithmetic.univrc",
+          "match": "[\\+\\-\\*/%]"
+        },
+        {
+          "name": "keyword.operator.comparison.relational.univrc",
+          "match": "[<>]"
+        },
+        {
+          "name": "keyword.operator.assignment.blocking.univrc",
+          "match": "="
+        },
+        {
+          "name": "keyword.operator.ternary.univrc",
+          "match": "[\\?:]"
+        },
+        {
+          "name": "keyword.operator.concatenation.univrc",
+          "match": "\\$"
+        }
+      ]
+    },
+    "member_access": {
+      "patterns": [
+        {
+          "match": "(\\.)([a-zA-Z_]\\w*)\\b",
+          "captures": {
+            "1": {
+              "name": "punctuation.accessor.univrc"
+            },
+            "2": {
+              "name": "variable.other.property.univrc"
+            }
+          }
+        }
+      ]
+    },
+    "type_identifiers": {
+      "patterns": [
+        {
+          "name": "entity.name.type.univrc",
+          "match": "\\b[A-Z][a-zA-Z0-9_]*\\b"
+        }
+      ]
+    },
+    "identifiers": {
+      "patterns": [
+        {
+          "name": "variable.other.univrc",
+          "match": "\\b[a-z_][a-zA-Z0-9_]*\\b"
+        }
+      ]
+    }
+  }
+}

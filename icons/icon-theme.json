@@ -1,0 +1,23 @@
+{
+  "iconDefinitions": {
+    "_vr_file": {
+      "iconPath": "./vr_icon.png"
+    },
+    "_file": {
+      "iconPath": "./file.png"
+    },
+    "_folder": {
+      "iconPath": "./folder.png"
+    },
+    "_folder_open": {
+      "iconPath": "./folder_open.png"
+    }
+  },
+  "file": "_file",
+  "folder": "_folder",
+  "folderExpanded": "_folder_open",
+  "fileExtensions": {
+    "vr": "_vr_file",
+    "VR": "_vr_file"
+  }
+}

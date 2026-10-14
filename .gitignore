@@ -1,0 +1,17 @@
+# Persian Local Documentation
+README-fa.md
+
+# Compiled VSIX Packages
+*.vsix
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.venv/
+venv/
+
+# Editor & OS files
+.vscode-test/
+.DS_Store
+Thumbs.db
