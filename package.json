@@ -2,7 +2,7 @@
   "name": "univrc-syntax",
   "displayName": "uniVRc IntelliSense",
   "description": "Official uniVRc IntelliSense: Real-time Lark syntax diagnostics, syntax highlighting, file icons, and snippets for uniVRc (.vr) HLS language.",
-  "version": "0.2.1",
+  "version": "0.3.0",
   "publisher": "univrc",
   "engines": {
     "vscode": "^1.60.0"
@@ -79,8 +79,30 @@
         "command": "univrc.checkSyntax",
         "title": "uniVRc: Check Syntax of Active File",
         "category": "uniVRc"
+      },
+      {
+        "command": "univrc.showVisualizer",
+        "title": "uniVRc: Show CDFG & Schedule Visualization",
+        "category": "uniVRc",
+        "icon": "$(graph)"
       }
     ],
+    "menus": {
+      "editor/title": [
+        {
+          "command": "univrc.showVisualizer",
+          "when": "editorLangId == univrc",
+          "group": "navigation"
+        }
+      ],
+      "editor/context": [
+        {
+          "command": "univrc.showVisualizer",
+          "when": "editorLangId == univrc",
+          "group": "1_modification"
+        }
+      ]
+    },
     "configuration": {
       "title": "uniVRc Language Configuration",
       "properties": {

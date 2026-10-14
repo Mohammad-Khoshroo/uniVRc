@@ -105,7 +105,7 @@
       "patterns": [
         {
           "name": "meta.directive.univrc",
-          "match": "(@)(?i:BIND_STORAGE|LOOP_FLATTEN|DEPENDENCE|LOOP_MERGE|ALLOCATION|OCCURRENCE|INTERFACE|TESTBENCH|TRIPCOUNT|PARTITION|DATAFLOW|RESOURCE|RESHAPE|BIND_OP|THREAD|INLINE|UNROLL|IMPORT|MODULE|WHILE|PARAM|UNTIL|RESET|PIPE|TRIG|FUNC|WHEN|SIM|REG|MEM)\\b",
+          "match": "(@)(?i:BIND_STORAGE|LOOP_FLATTEN|OCCURRENCE|DEPENDENCE|ALLOCATION|LOOP_MERGE|TRIPCOUNT|INTERFACE|TESTBENCH|PARTITION|RESOURCE|DATAFLOW|RESHAPE|BIND_OP|UNROLL|THREAD|MODULE|INLINE|IMPORT|RESET|UNTIL|WHILE|PARAM|FUNC|WHEN|PIPE|TRIG|REG|SIM|MEM)\\b",
           "captures": {
             "1": {
               "name": "punctuation.definition.directive.univrc"
@@ -218,7 +218,7 @@
         },
         {
           "name": "keyword.control.iteration.univrc",
-          "match": "\\b(index|range|step|from|set|to)\\b"
+          "match": "\\b(range|index|step|from|set|to)\\b"
         },
         {
           "name": "keyword.control.flow.univrc",
@@ -226,7 +226,7 @@
         },
         {
           "name": "keyword.other.declaration.univrc",
-          "match": "\\b(typedef|struct|import|enum)\\b"
+          "match": "\\b(typedef|import|struct|enum)\\b"
         },
         {
           "name": "storage.modifier.variable.univrc",
@@ -254,11 +254,11 @@
       "patterns": [
         {
           "name": "storage.type.primitive.univrc",
-          "match": "\\b(float|bool|wire|reg|int)\\b"
+          "match": "\\b(float|bool|wire|int|reg)\\b"
         },
         {
           "name": "storage.type.hardware.univrc",
-          "match": "\\b(unsigned|signed|struct|stream|fifo|fxp)\\b"
+          "match": "\\b(unsigned|struct|stream|signed|fifo|fxp)\\b"
         }
       ]
     },
