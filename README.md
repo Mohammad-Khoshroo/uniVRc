@@ -18,7 +18,7 @@
 ## Features
 
 ### Real-Time Syntax Diagnostics & Linter
-- **Live Parser Integration**: Directly interfaces with the native `Lark` parser engine (`anti-HLS/frontend/parser.py`).
+- **Live Parser Integration**: Directly interfaces with the native `Lark` parser engine (`uniVRc-HLS/frontend/parser.py`).
 - **Inline Error Squiggles**: Instant red squiggly underlines on syntax errors (unexpected tokens, invalid characters, unclosed blocks, missing semicolons) with line and column precision.
 - **VS Code Problems Panel (`Ctrl + Shift + M`)**: Full diagnostic reporting in the Problems view with one-click navigation to error locations.
 - **Status Bar Indicator**:
