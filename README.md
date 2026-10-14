@@ -30,6 +30,25 @@
 - Authentic geometric orange **VR** logo for all `*.vr` and `*.VR` files.
 - **How to enable**: Press `Ctrl + Shift + P` -> type `Preferences: File Icon Theme` -> select **`uniVRc File Icons`**.
 
+### Interactive CDFG & Schedule Visualizer
+- **Interactive Multi-View Dashboard**: Inspect Control Data Flow Graphs (CDFG), Control Flow Graphs (CFG), AST trees, memory hazard edges, and cycle-by-cycle schedules directly inside VS Code.
+- **How to open**:
+  - Click the **Graph Icon** in the top-right editor title bar.
+  - Right-click anywhere in a `.vr` file -> **uniVRc: Show CDFG & Schedule Visualization**.
+  - Or press `Ctrl + Shift + P` -> **uniVRc: Show CDFG & Schedule Visualization**.
+
+### Hover Tooltips & Documentation
+- Hover over any HLS pragma (`@PIPE`, `@PARTITION`, `@MODULE`, `@BIND_OP`, etc.), bit-exact type (`unsigned<W>`, `fxp<W,F>`, `wire`), or operator (`:=`, `+:`, `<&`) to view instant Markdown documentation, explanations, and usage examples.
+
+### Document Symbols & Outline
+- Full integration with VS Code's **Outline** view and **Breadcrumbs**.
+- Instantly browse and jump to Modules, Threads, Functions, Structs, Enums, and Testbenches.
+
+### Auto-Formatter
+- Automatically formats and cleans up `.vr` code using `Shift + Alt + F` or Format Document:
+  - Smart indentation for `{}` blocks and `switch/case` statements.
+  - Standardizes spacing around operators (`:=`, `=`, `==`, `!=`, `<=`, `>=`).
+  - Cleans up trailing whitespace and collapses redundant empty lines.
 
 ### Code Snippets
 Complete catalog of production-ready boilerplate templates triggered by typing the prefix and hitting `Tab`:
@@ -48,10 +67,10 @@ Complete catalog of production-ready boilerplate templates triggered by typing t
 ### Installing from VSIX Package
 Pre-packaged standalone release:
 ```text
-vscode-univrc/univrc-0.2.1.vsix
+vscode-univrc/univrc-syntax-0.3.0.vsix
 ```
 
 1. In VS Code, open the Extensions view (`Ctrl + Shift + X`).
 2. Click the `...` menu at the top right of the Extensions panel.
-3. Select **Install from VSIX...** and choose `univrc-0.2.1.vsix`.
-*(Alternatively run via command line: `code --install-extension univrc-0.2.1.vsix`)*
+3. Select **Install from VSIX...** and choose `univrc-syntax-0.3.0.vsix`.
+*(Alternatively run via command line: `code --install-extension univrc-syntax-0.3.0.vsix`)*
