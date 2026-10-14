@@ -11,8 +11,10 @@ import argparse
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 WORKSPACE_ROOT = os.path.dirname(SCRIPT_DIR)
-LARK_FILE = os.path.join(WORKSPACE_ROOT, "anti-HLS", "frontend", "pseudo_univrc.lark")
-FULL_LARK_FILE = os.path.join(WORKSPACE_ROOT, "anti-HLS", "frontend", "pseudo_vr.lark")
+LARK_FILE = os.path.join(WORKSPACE_ROOT, "anti-HLS", "frontend", "univrc-hls.lark")
+if not os.path.exists(LARK_FILE):
+    LARK_FILE = os.path.join(WORKSPACE_ROOT, "anti-HLS", "frontend", "pseudo_univrc.lark")
+FULL_LARK_FILE = os.path.join(WORKSPACE_ROOT, "univrc-full.lark")
 TMLANG_FILE = os.path.join(SCRIPT_DIR, "syntaxes", "univrc.tmLanguage.json")
 PACKAGE_JSON_FILE = os.path.join(SCRIPT_DIR, "package.json")
 BUILD_VSIX_FILE = os.path.join(SCRIPT_DIR, "build_vsix.py")
@@ -49,7 +51,7 @@ def bump_version(part="patch"):
 
 def extract_tokens(custom_lark=None):
     texts = []
-    files_to_check = [custom_lark] if custom_lark else [LARK_FILE, FULL_LARK_FILE]
+    files_to_check = [custom_lark] if custom_lark else [LARK_FILE]
     for path in files_to_check:
         if path and os.path.exists(path):
             with open(path, "r", encoding="utf-8") as f:
@@ -57,8 +59,10 @@ def extract_tokens(custom_lark=None):
     
     combined = "\n".join(texts)
     if not combined.strip():
-        # Fallback to server/grammar.lark
-        fb = os.path.join(SCRIPT_DIR, "server", "grammar.lark")
+        # Fallback to server/univrc-hls.lark or server/grammar.lark
+        fb = os.path.join(SCRIPT_DIR, "server", "univrc-hls.lark")
+        if not os.path.exists(fb):
+            fb = os.path.join(SCRIPT_DIR, "server", "grammar.lark")
         if os.path.exists(fb):
             with open(fb, "r", encoding="utf-8") as f:
                 combined = f.read()
@@ -81,7 +85,7 @@ def extract_tokens(custom_lark=None):
         "FUNC", "MODULE", "PARAM", "THREAD", "WHEN", "WHILE", "UNTIL", "TRIG", "RESET",
         "MEM", "REG", "UNROLL", "PIPE", "DATAFLOW", "DEPENDENCE", "PARTITION", "RESHAPE",
         "TRIPCOUNT", "LOOP_FLATTEN", "LOOP_MERGE", "RESOURCE", "ALLOCATION", "BIND_OP",
-        "BIND_STORAGE", "INTERFACE", "INLINE", "OCCURRENCE", "SIM", "TESTBENCH", "IMPORT"
+        "BIND_STORAGE", "INTERFACE", "INLINE", "OCCURRENCE", "IMPORT"
     }
     attrs.update(default_attrs)
 
@@ -188,13 +192,15 @@ def sync(bump=None, custom_lark=None):
         json.dump(tmlang, f, indent=2)
     print("-> Updated grammar file:", TMLANG_FILE)
 
-    # 4. Copy grammar to server/grammar.lark
+    # 4. Copy grammar to server/univrc-hls.lark and server/grammar.lark
+    server_hls = os.path.join(SCRIPT_DIR, "server", "univrc-hls.lark")
     server_grammar = os.path.join(SCRIPT_DIR, "server", "grammar.lark")
     src_lark = custom_lark if custom_lark and os.path.exists(custom_lark) else LARK_FILE
     if os.path.exists(src_lark):
         import shutil
+        shutil.copy2(src_lark, server_hls)
         shutil.copy2(src_lark, server_grammar)
-        print("-> Updated server/grammar.lark fallback")
+        print("-> Updated server/univrc-hls.lark & server/grammar.lark fallback")
 
     # 5. Copy to user extensions folder if present
     user_ext_dir = os.path.expanduser("~/.vscode/extensions/univrc.univrc-syntax-0.1.0")

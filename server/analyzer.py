@@ -8,7 +8,9 @@ import json
 import argparse
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
-FALLBACK_GRAMMAR_FILE = os.path.join(SCRIPT_DIR, "grammar.lark")
+FALLBACK_GRAMMAR_FILE = os.path.join(SCRIPT_DIR, "univrc-hls.lark")
+if not os.path.exists(FALLBACK_GRAMMAR_FILE):
+    FALLBACK_GRAMMAR_FILE = os.path.join(SCRIPT_DIR, "grammar.lark")
 
 
 def resolve_grammar(workspace_dir=None):

@@ -1,0 +1,297 @@
+// =============================================================================
+// pseudo-uniVRc: Synthesizable High-Level Synthesis (HLS) Input Grammar
+// =============================================================================
+// Part of the uniVRc Multi-Purpose Programming Language Specification.
+// Formally designed for High-Level Synthesis (HLS) algorithmic transformations,
+// C/Hardware co-design, scheduling (FDS, SDC, Modulo), register binding
+// (Left-Edge Min-Heap), conflict-free memory banking, and multi-objective DSE.
+//
+// File Extension: .vr
+// Language: uniVRc (pronounced "Universe" / "Uni-VR-C")
+// Dialect: pseudo-uniVRc (Synthesizable HLS Subset)
+// =============================================================================
+
+start: statement+
+
+// ---------- Statements ----------
+?statement: simple_stmt SEMI
+          | block
+          | import_stmt
+          | struct_def
+          | enum_def
+          | typedef_def
+          | module_def
+          | func_def
+          | if_stmt
+          | switch_stmt
+          | for_stmt
+          | while_stmt
+          | do_while_stmt
+          | repeat_stmt
+          | flow_stmt
+          | thread_stmt
+
+import_stmt: ("@IMPORT" "(" STRING ")" | "import" STRING) SEMI?
+
+// ---------- HLS Synthesis Pragmas & Behavioral Attributes ----------
+ATTR_NAME.2: /(?i:FUNC|MODULE|PARAM|THREAD|WHEN|WHILE|UNTIL|TRIG|RESET|MEM|REG|UNROLL|PIPE|DATAFLOW|DEPENDENCE|PARTITION|RESHAPE|TRIPCOUNT|LOOP_FLATTEN|LOOP_MERGE|RESOURCE|ALLOCATION|BIND_OP|BIND_STORAGE|INTERFACE|INLINE|OCCURRENCE)/
+
+attr: "@" ATTR_NAME ["(" [attr_args] ")"]
+attr_args: attr_arg ("," attr_arg)*
+attr_arg: NAME "=" expr
+        | /(?i:posedge|negedge)/ NAME -> edge_arg
+        | expr
+
+block: attr* "{" attr* statement* "}"
+
+?simple_stmt: decl_stmt
+            | inst_stmt
+            | assign_stmt
+            | reg_assign_stmt
+            | aug_assign
+            | reg_aug_assign
+            | incdec_stmt
+            | call_stmt
+
+flow_stmt: "break"   SEMI      -> break_stmt
+         | "continue" SEMI     -> continue_stmt
+         | "return" expr? SEMI -> return_stmt
+
+// ---------- Hardware Instantiation ----------
+inst_stmt: NAME NAME "(" [port_connections] ")"
+port_connections: port_conn ("," port_conn)*
+port_conn: "." NAME "(" expr ")"  -> named_port_conn
+         | expr                   -> positional_port_conn
+
+// ---------- L-Values ----------
+?lvalue: lvalue "." NAME                       -> member_access
+       | lvalue "[" expr "]"                   -> index
+       | lvalue "[" expr ":" expr "]"          -> slice
+       | lvalue "[" expr ":" expr ":" expr "]" -> slice_step
+       | lvalue "[" expr "+:" expr "]"         -> slice_plus
+       | lvalue "[" expr "-:" expr "]"         -> slice_minus
+       | NAME
+
+// ---------- Assignments (Blocking '=' vs Non-Blocking ':=') ----------
+assign_stmt:     lvalue "="  expr
+reg_assign_stmt: lvalue ":=" expr
+
+aug_assign:      lvalue AUGOP expr
+            |    lvalue LT LT "=" expr -> shl_assign
+            |    lvalue GT GT "=" expr -> shr_assign
+
+reg_aug_assign:  lvalue REG_AUGOP expr
+             |   lvalue ":" LT LT "=" expr -> reg_shl_assign
+             |   lvalue ":" GT GT "=" expr -> reg_shr_assign
+
+incdec_stmt:     INCOP lvalue   -> pre_incdec
+            |    lvalue INCOP   -> post_incdec
+
+call_stmt:       postfix "(" [exprlist] ")"
+
+// ---------- Type System & Declarations ----------
+decl_stmt: attr* VAR_KW NAME "=" expr                                 -> var_inferred
+         | attr* [CONST_KW] type NAME array_dims [ASSIGN_OP expr]     -> var_decl
+
+VAR_KW.2:   "var"
+CONST_KW.2: "const"
+ASSIGN_OP:  "=" | ":="
+
+array_dims: ("[" expr "]")*
+
+type: "int"                           -> type_int
+    | "float"                         -> type_float
+    | "bool"                          -> type_bool
+    | "wire" (LT expr GT)?            -> type_wire
+    | "signed"   LT expr GT           -> type_signed
+    | "unsigned" LT expr GT           -> type_unsigned
+    | "fxp" LT expr "," expr GT       -> type_fxp
+    | "stream" LT type ("," expr)? GT -> type_stream
+    | "fifo"   LT type ("," expr)? GT -> type_fifo
+    | "struct"? NAME                  -> type_struct_ref
+    | "reg"                           -> type_reg
+
+struct_def: "struct" NAME "{" struct_field+ "}" SEMI
+struct_field: type NAME array_dims ";"
+
+// ---------- Enums & Typedefs ----------
+enum_def: "enum" NAME (LT expr GT)? "{" [enum_list] "}" SEMI
+enum_list: enum_entry ("," enum_entry)* ","?
+enum_entry: NAME ["=" expr]
+
+typedef_def: "typedef" type NAME array_dims SEMI
+
+// ---------- Param Section ----------
+param_section: "@PARAM" "(" [param_list] ")"
+param_list: param ("," param)*
+param: NAME ["=" expr]
+
+// ---------- Modules (Hardware Top & Entities) ----------
+module_def: "@MODULE" ("(" [attr_args] ")")? attr* param_section? NAME "(" [module_params] ")" block
+
+module_params: module_param ("," module_param)*
+module_param: attr* PORT_DIR attr* type NAME array_dims ["=" expr]
+
+PORT_DIR.2: "in" | "out" | "inout"
+
+// ---------- Functions & Threads ----------
+func_def: attr* param_section? (type NAME | NAME) ("(" [func_params] ")")? (":" type)? block
+
+func_params: func_param ("," func_param)*
+func_param: attr* type NAME array_dims ["=" expr]
+
+thread_stmt: "@THREAD" statement*
+
+// ---------- Control Flow ----------
+if_stmt: attr* "if" "(" expr ")" block elif_clause* else_clause?
+elif_clause: "elif" "(" expr ")" block
+else_clause: "else" block
+
+switch_stmt: attr* "switch" "(" expr ")" "{" case_clause* default_clause? "}"
+case_clause: "case" "(" exprlist ")" block
+default_clause: "default" block
+
+for_stmt: attr* "for" "(" for_config ")" block
+
+?for_config: for_standard_c
+           | for_iter
+           | for_cstyle
+
+for_standard_c: for_init_clause _FOR_SEMI for_cond_clause _FOR_SEMI for_step_clause
+for_init_clause: [for_init]
+for_cond_clause: [expr]
+for_step_clause: [for_step]
+
+for_init: decl_stmt | assign_stmt
+for_step: incdec_stmt | aug_assign | reg_aug_assign | assign_stmt
+
+_FOR_SEMI: ";"
+
+?for_iter: for_iter_range | for_iter_set
+for_iter_range: "index" "=" NAME "," "range" "=" "(" exprlist ")"
+for_iter_set:   "index" "=" NAME "," "set" "=" "{" exprlist "}"
+
+for_cstyle: "from" "=" expr "," "to" "=" expr ("," "step" "=" expr)?
+          | expr "to" expr ("," "step" "=" expr)?
+
+while_stmt:    attr* "while" "(" expr ")" "do" block
+do_while_stmt: attr* "do" block "while" "(" expr ")" SEMI
+repeat_stmt:   attr* "repeat" "(" expr ")" block
+
+// ---------- Expressions & Operator Precedence ----------
+?expr: ternary
+
+?ternary: logic_or "?" expr ":" ternary -> ternary
+        | logic_or
+
+?logic_or:  logic_or  ("or" | "||")  logic_xor -> lor  | logic_xor
+?logic_xor: logic_xor ("xor" | "^^") logic_and -> lxor | logic_and
+?logic_and: logic_and ("and" | "&&") bit_or    -> land | bit_or
+
+?bit_or:  bit_or  "|" bit_xor  -> bor  | bit_xor
+?bit_xor: bit_xor "^" bit_and  -> bxor
+        | bit_xor "~^" bit_and -> bxnor
+        | bit_xor "^~" bit_and -> bxnor
+        | bit_and
+?bit_and: bit_and "&" equality -> band | equality
+
+?equality: equality "==" relational -> eq
+         | equality "!=" relational -> ne
+         | relational
+
+?relational: relational LT "=" shift -> le
+           | relational GT "=" shift -> ge
+           | relational LT  shift -> lt
+           | relational GT  shift -> gt
+           | shift
+
+?shift: shift LT LT LT additive -> ashl
+      | shift GT GT GT additive -> ashr
+      | shift LT LT  additive   -> shl
+      | shift GT GT  additive   -> shr
+      | shift LT LT "o" additive -> rol
+      | shift GT GT "o" additive -> ror
+      | additive
+
+?additive: additive "+" term -> add
+         | additive "-" term -> sub
+         | term
+
+?term: term "*" unary -> mul
+     | term "/" unary -> div
+     | term "%" unary -> mod
+     | unary
+
+?unary: "-"   unary -> neg
+      | "+"   unary -> pos
+      | "~"   unary -> bnot
+      | "!"   unary -> lnot
+      | "not" unary -> lnot
+      | RED_OP postfix -> reduction
+      | power
+
+?power: postfix "**" unary -> power_op
+      | postfix
+
+?postfix: postfix "(" [exprlist] ")" -> call
+        | postfix "." NAME -> member_access
+        | postfix "[" expr ":" expr ":" expr "]" -> slice_step
+        | postfix "[" expr ":" expr "]" -> slice
+        | postfix "[" expr "+:" expr "]" -> slice_plus
+        | postfix "[" expr "-:" expr "]" -> slice_minus
+        | postfix "[" expr "]" -> index
+        | atom
+
+?atom: NUMBER
+     | BOOL_LIT
+     | STRING    -> string_lit
+     | SIZED_BIN -> sized_lit
+     | SIZED_HEX -> sized_lit
+     | SIZED_DEC -> sized_lit
+     | NAME
+     | "(" expr ")"
+     | init_list
+     | "cast" LT type GT "(" expr ")" -> cast_expr
+     | concat
+     | builtin_call
+
+init_list: "{" [init_element ("," init_element)*] "}"
+init_element: "." NAME "=" expr      -> named_init
+            | "[" expr "]" "=" expr -> indexed_init
+            | expr                  -> positional_init
+            | init_list             -> nested_init
+
+concat: CONCAT_MARK "{" exprlist "}"          -> concat_list
+      | CONCAT_MARK "{" expr "{" expr "}" "}" -> concat_rep
+
+builtin_call: (MIN | MAX | ABS) "(" [exprlist] ")"
+exprlist:     expr ("," expr)*
+
+// ──────────────────── Terminals ────────────────────
+CONCAT_MARK.2: "$"
+MIN.2:         "min"
+MAX.2:         "max"
+ABS.2:         "abs"
+STRING:        /\"([^\"\\\\]|\\\\.)*\"/ | /'([^'\\\\]|\\\\.)*'/
+RED_OP.2:      "<&" | "<|" | "<^" | "<!" | "<~|" | "<~^"
+SIZED_BIN.2:   /[1-9][0-9_]*'[bB][01][01_]*/
+SIZED_HEX.2:   /[1-9][0-9_]*'[hH][0-9a-fA-F][0-9a-fA-F_]*/
+SIZED_DEC.2:   /[1-9][0-9_]*'[dD][0-9][0-9_]*/
+BOOL_LIT.2:    "true" | "false"
+
+AUGOP:     "+=" | "-=" | "*=" | "/=" | "%=" | "&=" | "|=" | "^="
+REG_AUGOP: ":+=" | ":-=" | ":*=" | ":/=" | ":%=" | ":&=" | ":|=" | ":^="
+INCOP:     "++" | "--"
+
+NAME:   /[a-zA-Z_]\w*/
+NUMBER: /\d+(\.\d+)?/
+
+LT:   "<"
+GT:   ">"
+SEMI: ";"
+
+COMMENT: /\/\/[^\n]*|\/\*[\s\S]*?\*\/|#[^\n]*/
+
+%import common.WS
+%ignore WS
+%ignore COMMENT

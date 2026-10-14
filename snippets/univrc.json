@@ -519,39 +519,5 @@
       "}"
     ],
     "description": "Matrix Multiplication Kernel with Banking & Pipelining"
-  },
-  "Testbench Simulation Block": {
-    "prefix": "tb",
-    "body": [
-      "@TESTBENCH",
-      "${1:tb_top}() {",
-      "    reg clk = 1'b0;",
-      "    reg rst_n = 1'b0;",
-      "    ",
-      "    // Clock generation",
-      "    repeat (${2:100}) {",
-      "        delay(5);",
-      "        clk = !clk;",
-      "    }",
-      "    ",
-      "    rst_n = 1'b1;",
-      "    $0",
-      "}"
-    ],
-    "description": "Simulation Testbench Definition (@TESTBENCH)"
-  },
-  "Assertion Check": {
-    "prefix": "assert",
-    "body": [
-      "assert(${1:condition}, \"${2:Assertion failed!}\");"
-    ],
-    "description": "Hardware Assertion Statement"
-  },
-  "Debug Print": {
-    "prefix": "println",
-    "body": [
-      "println(\"${1:Signal: }\", ${2:value});"
-    ],
-    "description": "Debug Print Statement"
   }
 }

@@ -58,6 +58,7 @@ FILES_TO_PACK = [
     os.path.join("snippets", "univrc.json"),
     os.path.join("server", "analyzer.py"),
     os.path.join("server", "visualizer_bridge.py"),
+    os.path.join("server", "univrc-hls.lark"),
     os.path.join("server", "grammar.lark"),
     os.path.join("icons", "icon-theme.json"),
     os.path.join("icons", "vr_icon.png"),
